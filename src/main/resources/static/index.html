@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gestion des livres</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 50px 16px;
+        }
+        .carte {
+            background: #fff;
+            width: 100%;
+            max-width: 760px;
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+        }
+        header {
+            padding: 28px 32px;
+            background: #f7f8fc;
+            border-bottom: 1px solid #e6e8f0;
+        }
+        header h1 { margin: 0; font-size: 26px; color: #2d3250; }
+        header p { margin: 6px 0 0; color: #7a7f99; }
+        table { width: 100%; border-collapse: collapse; }
+        th {
+            text-align: left;
+            padding: 14px 32px;
+            background: #2d3250;
+            color: #fff;
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        td { padding: 16px 32px; border-bottom: 1px solid #eef0f6; color: #2d3250; }
+        tbody tr:hover { background: #f3f6ff; }
+        .vide { text-align: center; color: #7a7f99; padding: 30px; }
+    </style>
+</head>
+<body>
+<div class="carte">
+    <header>
+        <h1>📚 Liste des livres</h1>
+        <p id="compteur">Chargement...</p>
+    </header>
+
+    <table>
+        <thead>
+        <tr><th>N°</th><th>Titre</th><th>Auteur</th></tr>
+        </thead>
+        <tbody id="corps"></tbody>
+    </table>
+</div>
+
+<script>
+    async function charger() {
+        const corps = document.getElementById("corps");
+        const compteur = document.getElementById("compteur");
+
+        try {
+            const reponse = await fetch("/api/livres");
+            const livres = await reponse.json();
+
+            compteur.textContent = livres.length + " livre(s)";
+
+            if (livres.length === 0) {
+                corps.innerHTML = '<tr><td colspan="3" class="vide">Aucun livre pour le moment</td></tr>';
+                return;
+            }
+
+            corps.innerHTML = "";
+            livres.forEach(l => {
+                const ligne = document.createElement("tr");
+
+                const numero = document.createElement("td");
+                numero.textContent = l.id;
+
+                const titre = document.createElement("td");
+                titre.textContent = l.titre;
+
+                const auteur = document.createElement("td");
+                auteur.textContent = l.auteur;
+
+                ligne.append(numero, titre, auteur);
+                corps.appendChild(ligne);
+            });
+        } catch (erreur) {
+            compteur.textContent = "Erreur de chargement";
+        }
+    }
+
+    charger();
+</script>
+</body>
+</html>
