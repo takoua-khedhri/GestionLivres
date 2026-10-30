@@ -9,7 +9,7 @@ pipeline {
         stage('Recuperer le code') {
             steps {
                 git branch: 'master',
-                    url: 'https://github.com/takoua-khedhri/gestion-livres.git'
+                    url: 'https://github.com/takoua-khedhri/GestionLivres'
             }
         }
 
